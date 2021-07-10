@@ -1,0 +1,69 @@
+---
+seccomp.enabled: false
+heartbeat.config.monitors:
+  path: "${path.config}/monitors.d/*.yml"
+  reload.enabled: false
+  reload.period: 5s
+
+#heartbeat.synthetic_suites:
+#- name: Todos
+#  path: "/opt/elastic-synthetics/examples/todos"
+#  schedule: "@every 1m"
+
+processors:
+
+heartbeat.monitors:
+#- type: http
+#  id: my-monitor2
+#  name: my-monitor2
+#  schedule: "@every 1m"
+#  urls: ["https://kakaobank.com"]
+- type: browser
+  id: my-monitor
+  name: My Monitor
+  schedule: "@every 1m"
+  script: |-
+    step("load homepage", async () => {
+        await page.setExtraHTTPHeaders({'accept-encoding': 'gzip, deflate, br'})
+        await page.goto('https://kakaobank.com', {timeout: 10000});
+    });
+
+setup.kibana:
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  host: "https://192.168.56.131:5601"
+  ssl.enabled: true
+  ssl.certificate_authorities: ["/usr/share/heartbeat/certs/ca/ca.crt"]
+  ssl.certificate: "/usr/share/heartbeat/certs/my-kibana/my-kibana.crt"
+  ssl.key: "/usr/share/heartbeat/certs/my-kibana/my-kibana.key"
+
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["https://192.168.56.131:9200"]
+
+  # Protocol - either `http` (default) or `https`.
+  #protocol: "https"
+
+  # Authentication credentials - either API key or username/password.
+  #api_key: "id:api_key"
+  username: "elastic"
+  password: "tOdvwuUDPW8y5hXxvHc9"
+
+  ssl.certificate_authorities: ["/usr/share/heartbeat/certs/ca/ca.crt"]
+
+setup.ilm.check_exists: true
+setup.ilm.overwrite: true
+
+processors:
+  - add_observer_metadata:
+      cache.ttl: 5m
+      geo:
+        name: Korea
+        location: 37.5642135, 127.0016985
+        continent_name: KOREA
+        country_iso_code: KR
+        region_name: Seoul
+        region_iso_code: KR-11
+        city_name: Seoul
