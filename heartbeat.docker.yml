@@ -25,7 +25,7 @@ heartbeat.monitors:
   script: |-
     step("load homepage", async () => {
         await page.setExtraHTTPHeaders({'accept-encoding': 'gzip, deflate, br'})
-        await page.goto('https://kakaobank.com', {timeout: 20000});
+        await page.goto('https://kakaobank.com', {timeout: 9000});
     });
 
 setup.kibana:
