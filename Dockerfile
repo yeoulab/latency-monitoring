@@ -7,3 +7,5 @@ COPY heartbeat.docker.yml ./
 COPY heartbeat.policy.json ./
 
 CMD ["./heartbeat", "-e"]
+
+
